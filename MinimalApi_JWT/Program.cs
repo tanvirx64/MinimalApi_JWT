@@ -67,7 +67,8 @@ app.MapGet("/", () => "Hello World!")
 app.MapPost("/login", 
     (UserLogin user, IUserService service) => Login(user, service))
     .Accepts<UserLogin>("application/json")
-    .Produces<string>();
+    .Produces<string>()
+    .Produces(statusCode: 404, contentType: "application/json");
 
 app.MapPost("/create",
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
@@ -77,9 +78,10 @@ app.MapPost("/create",
 
 app.MapGet("/get",
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Standard, Administrator")]
-    (int id, IMovieService service) => Get(id, service))
+(int id, IMovieService service) => Get(id, service))
     .Accepts<Movie>("application/json")
-    .Produces<Movie>(statusCode: 200, contentType: "application/json");
+    .Produces<Movie>(statusCode: 200, contentType: "application/json")
+    .Produces(statusCode: 404, contentType: "application/json");
 
 app.MapGet("/list", (IMovieService service) => GetAll(service))
     .Produces<List<Movie>>(statusCode:200, contentType: "application/json");
