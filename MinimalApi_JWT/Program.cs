@@ -94,7 +94,9 @@ app.MapPut("/update",
 
 app.MapDelete("/delete",
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Administrator")]
-    (int id, IMovieService service) => Delete(id, service));
+    (int id, IMovieService service) => Delete(id, service))
+    .Accepts<Movie>("application/json")
+    .Produces(statusCode: 404, contentType: "application/json");
 
 IResult Login(UserLogin user, IUserService service)
 {
@@ -115,8 +117,8 @@ IResult Login(UserLogin user, IUserService service)
             issuer: builder.Configuration["Jwt:Issuer"],
             audience: builder.Configuration["Jwt:Audience"],
             claims: claims,
-            notBefore: DateTime.UtcNow,
-            expires: DateTime.UtcNow.AddDays(60),
+            notBefore: DateTime.Now,
+            expires: DateTime.Now.AddDays(60),
             signingCredentials: new SigningCredentials(
                 new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])), 
                 SecurityAlgorithms.HmacSha256)
